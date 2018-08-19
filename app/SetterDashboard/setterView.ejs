@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>Setter | Hack Codeshala</title>
+</head>
+<h1>Setter | Hack Codeshala</h1>
+<form>
+Problem-Name <input type="text" name="name" id="name"><br>
+<div id="testcase">
+Input <input type="file" onchange="getInputFile('input_testcase1')" name="input_testcase1" id="input_testcase1">
+Output <input type="file" onchange="getOutputFile('output_testcase1')" name="output_testcase1" id="output_testcase1"><br>
+</div>
+<input type="button" name="upload" onclick="submitquestion()">
+</form>
+<script>
+	var arr = [];
+	var counter=2;
+	function getOutputFile(id)
+	{
+		console.log("chl gya");
+		console.log(arr);
+		var AwsFileName = new Date();
+      var file = document.getElementById(id).files[0].name;
+      console.log(file);
+       $.ajax({
+      	type: "POST",
+      	url: "/setter/upload1",
+      	data: {'filename': file,'AwsFileName': AwsFileName},
+      	success: function(res){
+      		$("#testcase").append('Input <input type="file" onchange="getInputFile(`input_testcase'+counter+'`)" name="input_testcase'+counter+'" id="input_testcase'+counter+'">>Output <input type="file" onchange="getOutputFile(`output_testcase'+counter+'`)" name="output_testcase'+counter+'" id="output_testcase'+counter+'"><br>');
+      		counter=counter+1;
+      		arr.push(AwsFileName);
+      	}
+      });
+	}
+	var Input_arr = [];
+	function getInputFile(id)
+	{
+	  var AwsFileName = new Date();
+	  console.log("id : ",id);
+      var file = document.getElementById(id).files[0].name;
+      console.log(file);
+       $.ajax({
+      	type: "POST",
+      	url: "/setter/upload1",
+      	data: {'filename': file,'AwsFileName': AwsFileName},
+      	success: function(res){
+      		Input_arr.push(AwsFileName);
+      	}
+      });
+	}
+	function submitquestion()
+	{
+		console.log(document.getElementById("name").value);
+		console.log(Input_arr);
+		console.log(arr);
+  		var formData = {
+  			name : document.getElementById("name").value,
+  			input_test_cases : Input_arr,
+  			output_test_cases : arr
+  		};
+  		$.ajax({
+  			type : "POST",
+  			url : "/setter/upload",
+  			data : formData,
+  			success:function(res){
+  				console.log("form submitted successfully");
+  			}
+  		})
+	}
+	</script>
+<body>
+</body>
+</html>
